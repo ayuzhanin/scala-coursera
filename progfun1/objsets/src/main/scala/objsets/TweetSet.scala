@@ -157,10 +157,8 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     maxRetweets(maxRetweets(leftTweet, elem), maxRetweets(rightTweet, elem))
   }
 
-  override def descendingByRetweet: TweetList = {
-    val retweeted = mostRetweeted
-    new Cons(retweeted, remove(retweeted).descendingByRetweet)
-  }
+  override def descendingByRetweet: TweetList =
+  	new Cons(retweeted, remove(mostRetweeted).descendingByRetweet)
 
   /**
     * The following methods are already implemented
