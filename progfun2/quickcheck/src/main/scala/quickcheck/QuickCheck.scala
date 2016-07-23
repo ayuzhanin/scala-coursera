@@ -38,8 +38,8 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
     * then delete the minimum, the resulting heap should be empty.
     */
   property("hint2") = forAll { (elem: Int) =>
-    val single = insert(elem, empty)
-    isEmpty(deleteMin(single))
+    val heap = insert(elem, empty)
+    isEmpty(deleteMin(heap))
   }
 
   /**
@@ -53,7 +53,7 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
       else {
         val min = findMin(remained)
         val reduced = deleteMin(remained)
-        isSorted(reduced) || min < findMin(reduced)
+        isEmpty(reduced) || (min < findMin(reduced) && isSorted(reduced))
       }
     }
 
@@ -65,8 +65,8 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
     * should return a minimum of one or the other
     */
   property("hint4") = forAll { (a: H, b: H) =>
-    val minimum = min(findMin(a), findMin(b))
-    minimum == findMin(meld(a , b))
+    val smallest = min(findMin(a), findMin(b))
+    smallest == findMin(meld(a , b))
   }
 
 }
