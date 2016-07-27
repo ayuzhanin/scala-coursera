@@ -17,11 +17,6 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
 
   implicit lazy val arbHeap: Arbitrary[H] = Arbitrary(genHeap)
 
-  property("gen1") = forAll { (h: H) =>
-    val m = if (isEmpty(h)) 0 else findMin(h)
-    findMin(insert(m, h)) == m
-  }
-
   /**
     * If you insert any two elements into an empty heap,
     * finding the minimum of the resulting heap should get
@@ -29,8 +24,7 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
     */
   property("hint1") = forAll { (a: Int, b: Int) =>
     val heap = insert(a, insert(b, empty))
-    if (a > b) findMin(heap) == b
-    else findMin(heap) == a
+    findMin(heap) == min(a, b)
   }
 
   /**
@@ -38,8 +32,8 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
     * then delete the minimum, the resulting heap should be empty.
     */
   property("hint2") = forAll { (elem: Int) =>
-    val heap = insert(elem, empty)
-    isEmpty(deleteMin(heap))
+    val single = insert(elem, empty)
+    isEmpty(deleteMin(single))
   }
 
   /**
@@ -48,16 +42,15 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
     * (Hint: recursion and helper functions are your friends.)
     */
   property("hint3") = forAll { (heap: H) =>
-    def isSorted(remained: H): Boolean = {
+    def isSorted(remained: H, prevMin: A): Boolean = {
       if (isEmpty(remained)) true
       else {
-        val min = findMin(remained)
-        val reduced = deleteMin(remained)
-        isEmpty(reduced) || (min < findMin(reduced) && isSorted(reduced))
+        val curMin = findMin(remained)
+        prevMin < curMin && isSorted(deleteMin(remained), curMin)
       }
     }
 
-    isSorted(heap)
+    isSorted(heap, findMin(heap))
   }
 
   /**
@@ -65,8 +58,19 @@ abstract class QuickCheckHeap extends Properties("Heap") with IntHeap {
     * should return a minimum of one or the other
     */
   property("hint4") = forAll { (a: H, b: H) =>
-    val smallest = min(findMin(a), findMin(b))
-    smallest == findMin(meld(a , b))
+    findMin(meld(a , b)) == min(findMin(a), findMin(b))
+  }
+
+  property("meld") = forAll { (h1: H, h2: H) =>
+    def heapEqual(h1: H, h2: H): Boolean =
+      if (isEmpty(h1) && isEmpty(h2)) true
+      else {
+        val m1 = findMin(h1)
+        val m2 = findMin(h2)
+        m1 == m2 && heapEqual(deleteMin(h1), deleteMin(h2))
+      }
+    heapEqual(meld(h1, h2),
+      meld(deleteMin(h1), insert(findMin(h1), h2)))
   }
 
 }
