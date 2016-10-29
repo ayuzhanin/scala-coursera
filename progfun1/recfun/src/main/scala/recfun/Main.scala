@@ -24,25 +24,16 @@ object Main {
     * Exercise 2
     */
   def balance(chars: List[Char]): Boolean = {
-    var brackets = 0
-    var index = 0
+  	def iter(syms: Array[Char], index: Int, acc: Int): Boolean =
+      if (acc < 0) false
+      else if (index > syms.length - 1) acc == 0
+      else syms(index) match {
+          case '(' => iter(syms, index + 1, acc + 1)
+          case ')' => iter(syms, index + 1, acc - 1)
+          case _ => iter(syms, index + 1, acc)
+        }
 
-    def count(sym: Char) =
-      if (sym == '(') brackets = brackets + 1
-      else if (sym == ')') brackets = brackets - 1
-
-    def iterate(sym: Char): Boolean = {
-      count(sym)
-      if (brackets < 0) false
-      else if (index != chars.length - 1) {
-        index = index + 1
-        iterate(chars(index))
-      }
-      else true
-    }
-
-    if (chars.isEmpty) true
-    else iterate(chars(index))
+    iter(chars, index=0, acc=0)
   }
 
   /**
