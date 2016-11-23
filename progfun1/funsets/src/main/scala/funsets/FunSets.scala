@@ -51,9 +51,7 @@ object FunSets {
   /**
     * Returns the subset of `s` for which `p` holds.
     */
-  def filter(s: Set, p: Int => Boolean): Set = {
-    x => contains(s, x) && p(x)
-  }
+  def filter(s: Set, p: Int => Boolean): Set =  intersect(s, p)
 
 
   /**
@@ -67,7 +65,7 @@ object FunSets {
   def forall(s: Set, p: Int => Boolean): Boolean = {
     def iterate(x: Int): Boolean = {
       if (x > bound) true
-      else if (contains(s, x) && !p(x)) false
+      else if (contains(diff(s,p), x)) false
       else iterate(x + 1)
     }
     iterate(-bound)

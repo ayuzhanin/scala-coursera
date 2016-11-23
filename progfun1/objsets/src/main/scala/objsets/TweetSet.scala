@@ -158,7 +158,7 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   override def descendingByRetweet: TweetList =
-  	new Cons(retweeted, remove(mostRetweeted).descendingByRetweet)
+  	new Cons(mostRetweeted, remove(mostRetweeted).descendingByRetweet)
 
   /**
     * The following methods are already implemented

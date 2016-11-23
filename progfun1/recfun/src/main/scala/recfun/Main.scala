@@ -24,16 +24,16 @@ object Main {
     * Exercise 2
     */
   def balance(chars: List[Char]): Boolean = {
-  	def iter(syms: Array[Char], index: Int, acc: Int): Boolean =
+    def iter(syms: List[Char], acc: Int): Boolean =
       if (acc < 0) false
-      else if (index > syms.length - 1) acc == 0
-      else syms(index) match {
-          case '(' => iter(syms, index + 1, acc + 1)
-          case ')' => iter(syms, index + 1, acc - 1)
-          case _ => iter(syms, index + 1, acc)
-        }
+      else if (syms.isEmpty) acc == 0
+      else syms.head match {
+        case '(' => iter(syms.tail, acc + 1)
+        case ')' => iter(syms.tail, acc - 1)
+        case _ => iter(syms.tail, acc)
+      }
 
-    iter(chars, index=0, acc=0)
+    iter(chars, acc = 0)
   }
 
   /**
